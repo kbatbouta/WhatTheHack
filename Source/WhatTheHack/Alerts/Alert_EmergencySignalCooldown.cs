@@ -14,7 +14,7 @@ namespace WhatTheHack.Alerts
             this.defaultLabel = "WTH_Alert_EmergencySignalCooldown_Label".Translate();
             this.defaultPriority = AlertPriority.Medium;
         }
-        public override string GetExplanation()
+        public override TaggedString GetExplanation()
         {
             return string.Format("WTH_Alert_EmergencySignalCooldown_Description".Translate());
         }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Fields>
+    <Field Name="compMountable" OfType="WhatTheHack.Comps.CompMountable" InType="Verse.Thing" />
+    <Field Name="hackableTickCounter" OfType="int" InType="Verse.Pawn" />
+    <Field Name="hackableCurrentBed" OfType="WhatTheHack.Buildings.Building_BaseMechanoidPlatform" InType="Verse.Pawn" />
+</Fields>

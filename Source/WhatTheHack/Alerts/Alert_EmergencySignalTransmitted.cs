@@ -16,7 +16,7 @@ namespace WhatTheHack.Alerts
             this.defaultPriority = AlertPriority.Critical;
         }
 
-        public override string GetExplanation()
+        public override TaggedString GetExplanation()
         {
             return string.Format("WTH_Alert_EmergencySignalTransmitted_Description".Translate());
         }

@@ -82,7 +82,7 @@
 </Operation>
 
 <Operation Class ="PatchOperationAdd">
-	<xpath>Defs/ThingDef[@Name = "ShipPartBase"]/killedLeavings</xpath>
+	<xpath>Defs/ThingDef[@Name = "CrashedShipPartBase"]/killedLeavings</xpath>
 	<value>
 		<WTH_MechanoidData>6</WTH_MechanoidData>
 	</value>
@@ -129,7 +129,7 @@
 	<success>Always</success>
 	<operations>
 		<li Class="PatchOperationAdd">
-			<xpath>Defs/ThingDef[@ParentName="BaseMechanoid" or (race/fleshType = "Mechanoid" and not (@ParentName="BaseMechanoid") and not (@Name="BaseMechanoid"))]</xpath>
+			<xpath>Defs/ThingDef[@ParentName="BaseMechanoid" or (race/fleshType = "Mechanoid" and not (@ParentName="BaseMechanoid") and not (@Name="BaseMechanoid")) and not (recipes)]</xpath>
 			<value>
 				<recipes>
 					<li>WTH_HackMechanoid</li>
@@ -231,6 +231,17 @@
 			</li>
 		</value>
 	</Operation> 
+	
+	<Operation Class="PatchOperationAddModExtension">
+		<xpath>Defs/ThingDef[defName = "Mech_Pikeman"]</xpath>
+		<value>
+			<!-- Makes it possible that Pikemen can use the turret module despite their body size of only 1 --> 
+			<li Class="WhatTheHack.DefModExtension_TurretModule">
+				<ignoreMinBodySize>true</ignoreMinBodySize>
+			</li>
+		</value>
+	</Operation> 
+	
 	<Operation Class="PatchOperationInsert">
 		<xpath>Defs/ThinkTreeDef[defName = "Mechanoid" or defName = "Mechanoid_Skullywag"]/thinkRoot[@Class = "ThinkNode_Priority"]/subNodes/li[treeDef="LordDuty"]</xpath> <!--Priority is important here, hence the insert after this specific subNode--> 
 		<value>
@@ -292,5 +303,15 @@
 					</countRange>
 			</li>
 		</value>
+	</Operation>
+	
+	<!-- Save our ship 2 compatibility --> 
+	<Operation Class="PatchOperationFindMod">
+		<mods>
+			<li>Save Our Ship 2</li>
+		</mods>
+		<match Class="PatchOperationRemove">
+			<xpath>Defs/ThingDef[(@ParentName="BaseShuttle") or (@Name="BaseShuttle")]/comps/li[(@Class = "CompProperties_Refuelable") and (descendant::fuelLabel)]</xpath>
+		</match>
 	</Operation>
 </Patch>

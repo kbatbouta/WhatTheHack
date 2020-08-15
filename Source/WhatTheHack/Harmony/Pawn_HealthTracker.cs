@@ -1,9 +1,10 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using RimWorld;
 using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Verse;
@@ -32,10 +33,9 @@ namespace WhatTheHack.Harmony
     [HarmonyPatch(typeof(Pawn_HealthTracker), "HasHediffsNeedingTend")]
     static class Pawn_HealthTracker_HasHediffsNeedingTend
     {
-        static bool Prefix(Pawn_HealthTracker __instance)
+        static bool Prefix(Pawn_HealthTracker __instance, ref Pawn ___pawn)
         {
-            Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
-            if (pawn.RaceProps.IsMechanoid && pawn.IsHacked())
+            if (___pawn.RaceProps.IsMechanoid && ___pawn.IsHacked())
             {
                 return false;
             }
@@ -56,11 +56,11 @@ namespace WhatTheHack.Harmony
             {
                 CodeInstruction instruction = instructionsList[i];
 
-                if (instruction.operand == typeof(RaceProperties).GetMethod("get_IsMechanoid"))
+                if (instruction.operand as MethodInfo == typeof(RaceProperties).GetMethod("get_IsMechanoid"))
                 {
                     flag = true;
                 }
-                if(flag && instruction.opcode == OpCodes.Ldc_R4)
+                if (flag && instruction.opcode == OpCodes.Ldc_R4)
                 {
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Pawn_HealthTracker), "pawn"));
@@ -76,10 +76,10 @@ namespace WhatTheHack.Harmony
         }
         public static float GetMechanoidDownChance(Pawn pawn)
         {
-            
-            if(pawn.Faction != Faction.OfPlayer && !pawn.Faction.HostileTo(Faction.OfPlayer))//make sure allied mechs always die to prevent issues with relation penalties when the player hacks their mechs. 
+
+            if (pawn.Faction != Faction.OfPlayer && !pawn.Faction.HostileTo(Faction.OfPlayer))//make sure allied mechs always die to prevent issues with relation penalties when the player hacks their mechs. 
             {
-               return 1.0f;
+                return 1.0f;
             }
             else
             {
@@ -98,19 +98,19 @@ namespace WhatTheHack.Harmony
             {
                 return;
             }
-            if(pawn.Faction != Faction.OfPlayer && !pawn.Faction.HostileTo(Faction.OfPlayer))//make sure allied mechs always die to prevent issues with relation penalties when the player hacks their mechs. 
+            if (pawn.Faction != Faction.OfPlayer && !pawn.Faction.HostileTo(Faction.OfPlayer))//make sure allied mechs always die to prevent issues with relation penalties when the player hacks their mechs. 
             {
                 return;
             }
 
-            if(__result == true)
+            if (__result == true)
             {
                 if (__instance.hediffSet.HasHediff(WTH_DefOf.WTH_HeavilyDamaged))
                 {
                     __result = false;
                     return;
                 }
-                if (Rand.Chance(Base.downedOnDeathThresholdChance.Value/100f))//Chance mech goes down instead of dying when lethal threshold is achieved. 
+                if (Rand.Chance(Base.downedOnDeathThresholdChance.Value / 100f))//Chance mech goes down instead of dying when lethal threshold is achieved. 
                 {
                     __instance.AddHediff(WTH_DefOf.WTH_HeavilyDamaged);
                     if (pawn.mindState == null)
@@ -142,13 +142,15 @@ namespace WhatTheHack.Harmony
     }
     //Recharge and repair mechanoid when on platform
     //TODO: refactor. Move all needs related stuff to something needs related
-    [HarmonyPatch(typeof(Pawn_HealthTracker), "HealthTick")]
+    [HarmonyPatch(typeof(Pawn), nameof(Pawn.TickRare))]
     static class Pawn_HealthTracker_HealthTick
     {
-        static void Postfix(Pawn_HealthTracker __instance)
+        static void Postfix(Pawn __instance)
         {
+            Pawn pawn = __instance;
+            Pawn_HealthTracker healthTracker = __instance.health;
 
-            Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
+            pawn.hackableTickCounter++;
             if (!pawn.RaceProps.IsMechanoid)
             {
                 return;
@@ -159,29 +161,34 @@ namespace WhatTheHack.Harmony
                 return;
             }
 
-            if (pawn.IsHashIntervalTick(10) && pawn.health.hediffSet.HasHediff(WTH_DefOf.WTH_Repairing))
+            if (pawn.health.hediffSet.HasHediff(WTH_DefOf.WTH_Repairing))
             {
-                TryHealRandomInjury(__instance, pawn, 4000f / RimWorld.GenDate.TicksPerDay);
+                TryHealRandomInjury(healthTracker, pawn, 4000f / RimWorld.GenDate.TicksPerDay);
             }
 
-            if (!(pawn.CurrentBed() is Building_BaseMechanoidPlatform))
+            if (pawn.hackableCurrentBed == null)
             {
-                return;
+                var bed = pawn.CurrentBed();
+                if (bed is Building_BaseMechanoidPlatform)
+                    pawn.hackableCurrentBed = (Building_BaseMechanoidPlatform)bed;
             }
-            Building_BaseMechanoidPlatform platform = (Building_BaseMechanoidPlatform)pawn.CurrentBed();
 
-            if (platform.RepairActive && __instance.hediffSet.HasNaturallyHealingInjury() && !pawn.health.hediffSet.HasHediff(WTH_DefOf.WTH_Repairing))
+            Building_BaseMechanoidPlatform platform = pawn.hackableCurrentBed;
+
+
+            if ((pawn.hackableTickCounter + pawn.thingIDNumber) % 10 == 1 && platform.RepairActive && healthTracker.hediffSet.HasNaturallyHealingInjury() && !pawn.health.hediffSet.HasHediff(WTH_DefOf.WTH_Repairing))
             {
-                if (pawn.IsHashIntervalTick(10) && platform.CanHealNow())
+                if (platform.CanHealNow())
                 {
-                    TryHealRandomInjury(__instance, pawn, (platform.GetStatValue(WTH_DefOf.WTH_RepairRate) * 10f) / RimWorld.GenDate.TicksPerDay , platform);
+                    TryHealRandomInjury(healthTracker, pawn, (platform.GetStatValue(WTH_DefOf.WTH_RepairRate) * 500f) / RimWorld.GenDate.TicksPerDay, platform);
                 }
             }
-            if (!__instance.hediffSet.HasNaturallyHealingInjury() && platform.RegenerateActive && pawn.IsHashIntervalTick(100) && platform.refuelableComp.Fuel > 4f) //TODO: no magic number
+            if ((pawn.hackableTickCounter + pawn.thingIDNumber) % 2 == 0 && !healthTracker.hediffSet.HasNaturallyHealingInjury() && platform.RegenerateActive && platform.refuelableComp.Fuel > 4f) //TODO: no magic number
             {
                 TryRegeneratePart(pawn, platform);
                 RegainWeapon(pawn);
             }
+
         }
 
         private static void SelfDestruct(Pawn pawn)
@@ -203,20 +210,20 @@ namespace WhatTheHack.Harmony
 
         private static void RegainWeapon(Pawn pawn)
         {
-            if(pawn.equipment.Primary == null)
+            if (pawn.equipment.Primary == null)
             {
-                PawnWeaponGenerator.TryGenerateWeaponFor(pawn);
+                PawnWeaponGenerator.TryGenerateWeaponFor(pawn, new PawnGenerationRequest(pawn.kindDef));
             }
         }
 
         private static void TryRegeneratePart(Pawn pawn, Building_BaseMechanoidPlatform platform)
         {
             Hediff_MissingPart hediff = FindBiggestMissingBodyPart(pawn);
-            if(hediff == null || pawn.health.hediffSet.HasHediff(WTH_DefOf.WTH_RegeneratedPart))
+            if (hediff == null || pawn.health.hediffSet.HasHediff(WTH_DefOf.WTH_RegeneratedPart))
             {
                 return;
             }
-            
+
             pawn.health.RemoveHediff(hediff);
             float partHealth = hediff.Part.def.GetMaxHealth(pawn);
             float fuelNeeded = Math.Min(4f, partHealth / 5f);//body parts with less health need less parts to regenerate, capped at 4. 
@@ -226,7 +233,7 @@ namespace WhatTheHack.Harmony
             DamageWorker_AddInjury addInjury = new DamageWorker_AddInjury();
             addInjury.Apply(new DamageInfo(WTH_DefOf.WTH_RegeneratedPartDamage, hediff.Part.def.GetMaxHealth(pawn) - 1, 0, -1, pawn, hediff.Part), pawn);
 
-         
+
         }
 
         //almost literal copy vanilla CompUseEffect_FixWorstHealthCondition.FindBiggestMissingBodyPart, only returns the hediff instead. 
@@ -262,9 +269,9 @@ namespace WhatTheHack.Harmony
             {
                 MoteMaker.ThrowMetaIcon(pawn.Position, pawn.Map, ThingDefOf.Mote_HealingCross);
             }
-            if(platform != null)
+            if (platform != null)
             {
-                platform.refuelableComp.ConsumeFuel((platform.GetStatValue(WTH_DefOf.WTH_PartConsumptionRate) * 10f)/GenDate.TicksPerDay);//TODO no magic number
+                platform.refuelableComp.ConsumeFuel((platform.GetStatValue(WTH_DefOf.WTH_PartConsumptionRate) * 10f) / GenDate.TicksPerDay);//TODO no magic number
             }
         }
 

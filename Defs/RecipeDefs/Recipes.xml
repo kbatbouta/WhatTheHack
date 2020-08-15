@@ -1126,7 +1126,9 @@
 				</filter>
 				<count>1</count>
 			</li>
-		</ingredients>		
+		</ingredients>	
+		<hideBodyPartNames>true</hideBodyPartNames>
+		<targetsBodyPart>false</targetsBodyPart>		
 		<addsHediff>WTH_CargoModule</addsHediff>
 		<modExtensions>
 			<li Class="WhatTheHack.DefModExtension_Recipe">
@@ -1195,6 +1197,8 @@
 			</li>
 		</ingredients>		
 		<addsHediff>WTH_ArmorModule</addsHediff>
+		<hideBodyPartNames>true</hideBodyPartNames>
+		<targetsBodyPart>false</targetsBodyPart>	
 		<modExtensions>
 			<li Class="WhatTheHack.DefModExtension_Recipe">
 				<requireBed>true</requireBed>
@@ -1410,7 +1414,7 @@
 		<modExtensions>
 			<li Class="WhatTheHack.DefModExtension_Recipe">
 				<requireBed>true</requireBed>
-				<minBodySize>2.0</minBodySize>
+				<minBodySize>1.5</minBodySize>
 			</li>
 		</modExtensions>
 		<addsHediff>WTH_TurretModule</addsHediff>

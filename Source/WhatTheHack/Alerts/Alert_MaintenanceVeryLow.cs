@@ -26,7 +26,7 @@ namespace WhatTheHack.Alerts
             this.defaultLabel = "WTH_Alert_Maintenance_VeryLow_Label".Translate();            
         }
 
-        public override string GetExplanation()
+        public override TaggedString GetExplanation()
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine();

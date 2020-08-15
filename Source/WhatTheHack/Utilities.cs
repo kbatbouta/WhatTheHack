@@ -134,7 +134,7 @@ namespace WhatTheHack
                 !b.IsBurning() &&
                 !b.IsForbidden(targetPawn) &&
                 targetPawn.CanReserve(b) &&
-                (targetPawn.ownership.OwnedBed == null && platform.owners.NullOrEmpty() || platform.owners.Contains(targetPawn)))
+                (targetPawn.ownership.OwnedBed == null && !platform.CompAssignableToPawn.AssignedPawns.Any()|| platform.CompAssignableToPawn.AssignedPawns.Contains(targetPawn)))
                 {
                     CompFlickable flickable = platform.TryGetComp<CompFlickable>();
                     if(flickable != null && !flickable.SwitchIsOn)
@@ -193,7 +193,32 @@ namespace WhatTheHack
             }
             CalcDaysOfFuel(numMechanoids, fuelAmount, ref fuelConsumption, numPlatforms, ref daysOfFuel, daysOfFuelReason);
         }
+        public static void InitWorkTypesAndSkills(Pawn pawn, ExtendedPawnData pawnData)
+        {
 
+            if (pawn.skills != null)
+            {
+                if (pawn.skills.GetSkill(SkillDefOf.Shooting).Level == 0)
+                {
+                    pawn.skills.GetSkill(SkillDefOf.Shooting).Level = 8;
+                }
+                if (pawn.skills.GetSkill(SkillDefOf.Melee).Level == 0)
+                {
+                    pawn.skills.GetSkill(SkillDefOf.Melee).Level = 4;
+                }
+            }
+            if (pawn.workSettings != null)
+            {
+                var huntingWorkType = WorkTypeDefOf.Hunting;
+                if(pawnData.workTypes == null)
+                {
+                    // Log.Message("WTHACK: " + pawn.Name);
+                    pawnData.workTypes = new List<WorkTypeDef>();
+                }
+                pawnData.workTypes.Add(huntingWorkType);
+                pawn.workSettings.SetPriority(huntingWorkType, 3);
+            }
+        }
         public static void CalcDaysOfFuel(int numMechanoids, float fuelAmount, ref float fuelConsumption, int numPlatforms, ref float daysOfFuel, StringBuilder daysOfFuelReason)
         {
             if (numMechanoids == 0)

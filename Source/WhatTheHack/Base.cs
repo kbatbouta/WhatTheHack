@@ -8,7 +8,7 @@ using HugsLib.Utils;
 using HugsLib.Settings;
 using Verse;
 using RimWorld;
-using Harmony;
+using HarmonyLib;
 using WhatTheHack.Comps;
 using WhatTheHack.Recipes;
 using UnityEngine;
@@ -86,6 +86,7 @@ namespace WhatTheHack
             allowedMechWork.Add(WorkTypeDefOf.Firefighter);
             allowedMechWork.Add(WTH_DefOf.Cleaning);
             allowedMechWork.Add(WTH_DefOf.PlantCutting);
+            
             foreach(WorkTypeDef wtd in allowedMechWork)
             {
                 foreach(SkillDef skill in wtd.relevantSkills)
@@ -96,6 +97,8 @@ namespace WhatTheHack
                     }
                 }
             }
+            allowedMechSkills.Add(SkillDefOf.Melee);
+            allowedMechSkills.Add(SkillDefOf.Shooting);
 
             allBelts = DefDatabase<ThingDef>.AllDefs.Where((ThingDef t) => Utilities.IsBelt(t.apparel)).ToList();
             allSpawnableModules = DefDatabase<HediffDef>.AllDefs.Where((HediffDef h) => h.GetModExtension<DefModextension_Hediff>() is DefModextension_Hediff modExt && modExt.spawnChance > 0).ToList();
@@ -310,6 +313,7 @@ namespace WhatTheHack
                 r.defName = "WTH_UninstallModule_" + def.defName;
                 r.label = "WTH_UninstallModule".Translate(new object[] { def.label });
                 r.jobString = "WTH_UninstallModule_Jobstring".Translate(new object[] { def.label });
+                r.appliedOnFixedBodyParts = new List<BodyPartDef>() { WTH_DefOf.Reactor };
                 r.workerClass = typeof(Recipe_ModifyMechanoid_UninstallModule);
                 r.anesthetize = false;
                 r.effectWorking = DefDatabase<EffecterDef>.AllDefs.FirstOrDefault((EffecterDef ed) => ed.defName == "Repair");
@@ -403,7 +407,7 @@ namespace WhatTheHack
 
         public override void WorldLoaded()
         {
-            _extendedDataStorage = UtilityWorldObjectManager.GetUtilityWorldObject<ExtendedDataStorage>();
+            _extendedDataStorage = Find.World.GetComponent<ExtendedDataStorage>();
             _extendedDataStorage.Cleanup();
             base.WorldLoaded();
         }

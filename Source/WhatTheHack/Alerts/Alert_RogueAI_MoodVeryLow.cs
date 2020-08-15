@@ -32,7 +32,7 @@ namespace WhatTheHack.Alerts
             this.defaultPriority = AlertPriority.High;
         }
 
-        public override string GetExplanation()
+        public override TaggedString GetExplanation()
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine();

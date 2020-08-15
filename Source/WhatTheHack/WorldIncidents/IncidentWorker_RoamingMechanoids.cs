@@ -8,6 +8,7 @@ using Verse;
 
 namespace WhatTheHack.WorldIncidents
 {
+    /*
     public class IncidentWorker_RoamingMechanoids : IncidentWorker
     {
         private const int MinDistance = 2;
@@ -29,8 +30,8 @@ namespace WhatTheHack.WorldIncidents
                 return false;
 
             Site site = SiteMaker.MakeSite(WTH_DefOf.WTH_RoamingMechanoidsCore,
-                                           WTH_DefOf.WTH_RoamingMechanoidsPart,
-                                           tile, Faction.OfMechanoids, ifHostileThenMustRemainHostile: true);
+                                           
+                                           tile, Faction.OfMechanoids, true);
 
             if (site == null)
                 return false;
@@ -52,4 +53,5 @@ namespace WhatTheHack.WorldIncidents
             return TileFinder.TryFindNewSiteTile(out tile, MinDistance, MaxDistance, true, false);
         }
     }
+    */
 }

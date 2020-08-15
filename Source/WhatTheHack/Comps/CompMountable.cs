@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,8 @@ namespace WhatTheHack.Comps
         public Pawn mountedTo = null;
         public float drawOffset = 0;
 
-        public Pawn MountedTo {
+        public Pawn MountedTo
+        {
             get
             {
                 return this.MountedTo;
@@ -38,6 +39,13 @@ namespace WhatTheHack.Comps
             Configure();
             SetDrawOffset();
         }
+
+        public override void Initialize(CompProperties props)
+        {
+            base.Initialize(props);
+            parent.compMountable = this;
+        }
+
         public override void PostDestroy(DestroyMode mode, Map previousMap)
         {
             Uninstall();
@@ -62,11 +70,11 @@ namespace WhatTheHack.Comps
             if (!Active)
             {
                 return;
-            }           
+            }
             Configure();
             LetMountedToWaitIfReserved();
 
-            if(mountedTo.health != null && !mountedTo.health.hediffSet.HasHediff(WTH_DefOf.WTH_TurretModule))
+            if (mountedTo.health != null && !mountedTo.health.hediffSet.HasHediff(WTH_DefOf.WTH_TurretModule))
             {
                 Uninstall();
             }
@@ -79,7 +87,7 @@ namespace WhatTheHack.Comps
             {
                 if (mountedTo.CurJobDef != JobDefOf.Wait_Combat && mountedTo.CurJobDef != WTH_DefOf.WTH_Mechanoid_Rest)
                 {
-                    mountedTo.jobs.StartJob(new Job(JobDefOf.Wait_Combat) { expiryInterval = 10000}, JobCondition.InterruptForced);
+                    mountedTo.jobs.StartJob(new Job(JobDefOf.Wait_Combat) { expiryInterval = 10000 }, JobCondition.InterruptForced);
                     mountedTo.jobs.curDriver.AddFailCondition(delegate { return !turret.Map.reservationManager.IsReservedByAnyoneOf(turret, Faction.OfPlayer); });
                 }
             }
@@ -118,7 +126,7 @@ namespace WhatTheHack.Comps
         private bool OutOfBounds(Pawn mountedTo, Thing parent)
         {
 
-            CellRect cellRect = GenAdj.OccupiedRect(mountedTo.Position, mountedTo.Rotation, parent.def.Size + new IntVec2(1,1));
+            CellRect cellRect = GenAdj.OccupiedRect(mountedTo.Position, mountedTo.Rotation, parent.def.Size + new IntVec2(1, 1));
             CellRect.CellRectIterator iterator = cellRect.GetIterator();
             while (!iterator.Done())
             {
@@ -167,7 +175,7 @@ namespace WhatTheHack.Comps
 
         private void SetDrawOffset()
         {
-            
+
             PawnKindLifeStage curKindLifeStage = mountedTo.ageTracker.CurKindLifeStage;
             Texture2D unreadableTexture = curKindLifeStage.bodyGraphicData.Graphic.MatEast.mainTexture as Texture2D;
             Texture2D t = unreadableTexture.GetReadableTexture();
@@ -177,7 +185,7 @@ namespace WhatTheHack.Comps
             //If animal texture does not fit in a tile, take this into account
             float extraOffset = textureHeight > 1f ? (textureHeight - 1f) / 2f : 0;
             //Small extra offset, you don't want to draw pawn exactly on back
-            extraOffset += 0.5f; 
+            extraOffset += 0.5f;
             drawOffset = (textureHeight * backHeightRelative - extraOffset);
         }
 

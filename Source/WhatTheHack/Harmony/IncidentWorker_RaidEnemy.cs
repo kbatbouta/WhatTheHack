@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -8,14 +8,15 @@ using Verse;
 
 namespace WhatTheHack.Harmony
 {
-   
+
+    [StaticConstructorOnStartup]
     [HarmonyPatch(typeof(IncidentWorker_RaidEnemy), "TryResolveRaidFaction")]
     class IncidentWorker_RaidEnemy_TryResolveRaidFaction
     {
         static bool Prefix(ref IncidentParms parms, ref bool __result)
         {
             Map map = (Map)parms.target;
-            
+
             if (parms.target != null && parms.target.IncidentTargetTags().Contains(IncidentTargetTagDefOf.Map_RaidBeacon))
             {
                 foreach (ThingWithComps current in map.listerThings.ThingsOfDef(WTH_DefOf.WTH_MechanoidBeacon))
@@ -24,7 +25,7 @@ namespace WhatTheHack.Harmony
                     if (compHibernatable != null && compHibernatable.State == HibernatableStateDefOf.Starting && Rand.Chance(0.85f))
                     {
                         __result = true;
-                        parms.faction = Faction.OfMechanoids;                      
+                        parms.faction = Faction.OfMechanoids;
                         return false;
                     }
                 }
@@ -32,5 +33,5 @@ namespace WhatTheHack.Harmony
             return true;
         }
     }
-    
+
 }

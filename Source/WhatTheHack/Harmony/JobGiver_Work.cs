@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace WhatTheHack.Harmony
         {
             if (__result == false)
             {
-                __result = (giver.def.nonColonistsCanDo || pawn.IsColonist || pawn.IsHacked() && pawn.workSettings != null) && (pawn.story == null || !pawn.story.WorkTagIsDisabled(giver.def.workTags)) && !giver.ShouldSkip(pawn, false) && giver.MissingRequiredCapacity(pawn) == null;
+                __result = (giver.def.nonColonistsCanDo || pawn.IsColonist || pawn.IsHacked() && pawn.workSettings != null) && (pawn.story == null || !pawn.WorkTypeIsDisabled(giver.def.workType)) && !giver.ShouldSkip(pawn, false) && giver.MissingRequiredCapacity(pawn) == null;
             }
         }
     }

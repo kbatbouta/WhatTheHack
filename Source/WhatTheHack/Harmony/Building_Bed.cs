@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -22,30 +22,30 @@ namespace WhatTheHack.Harmony
             }       
         }
     }
-
-    [HarmonyPatch(typeof(Building_Bed), "get_MaxAssignedPawnsCount")]
-    static class Building_Bed_get_MaxAssignedPawnsCount
+    
+    [HarmonyPatch(typeof(CompAssignableToPawn), "get_MaxAssignedPawnsCount")]
+    static class CompAssignableToPawn_get_MaxAssignedPawnsCount
     {
-        static void Postfix(Building_Bed __instance, ref int __result)
+        static void Postfix(CompAssignableToPawn __instance, ref int __result)
         {
-            if (__instance is Building_BaseMechanoidPlatform) {
+            if (__instance.parent is Building_BaseMechanoidPlatform) {
                 __result = 1;
             }
         }
     }
-
-    [HarmonyPatch(typeof(Building_Bed), "get_AssigningCandidates")]
-    static class Building_Bed_AssigningCandidates
+    
+    [HarmonyPatch(typeof(CompAssignableToPawn), "get_AssigningCandidates")]
+    static class CompAssignableToPawn_AssigningCandidates
     {
-        static bool Prefix(Building_Bed __instance, ref IEnumerable<Pawn> __result)
+        static bool Prefix(CompAssignableToPawn __instance, ref IEnumerable<Pawn> __result)
         {
-            if(__instance is Building_BaseMechanoidPlatform)
+            if(__instance.parent is Building_BaseMechanoidPlatform)
             {
-                if (!__instance.Spawned)
+                if (!__instance.parent.Spawned)
                 {
                     __result = Enumerable.Empty<Pawn>();
                 }
-                __result =  __instance.Map.mapPawns.AllPawns.Where((Pawn p) => p.IsHacked());
+                __result =  __instance.parent.Map.mapPawns.AllPawns.Where((Pawn p) => p.IsHacked());
                 return false;
             }
             return true;

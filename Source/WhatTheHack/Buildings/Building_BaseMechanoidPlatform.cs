@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -57,12 +57,12 @@ namespace WhatTheHack.Buildings
             }
             yield return new Command_Action
             {
-                defaultLabel = "CommandBedSetOwnerLabel".Translate(),
+                defaultLabel = "CommandThingSetOwnerLabel".Translate(),
                 icon = ContentFinder<Texture2D>.Get("UI/Commands/AssignOwner", true),
                 defaultDesc = "WTH_Gizmo_SetMechanoidOwner_Description".Translate(),
                 action = delegate
                 {
-                    Find.WindowStack.Add(new Dialog_AssignBuildingOwner(this));
+                    Find.WindowStack.Add(new Dialog_AssignBuildingOwner(this.TryGetComp<CompAssignableToPawn_Bed>()));
                 },
                 hotKey = KeyBindingDefOf.Misc3
             };

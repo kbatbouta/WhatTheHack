@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace WhatTheHack
     [DefOf]
     public class WTH_DefOf
     {
+        public static QuestScriptDef WTH_LongRangeMineralScannerMechParts;
+
         public static HediffDef WTH_TargetingHacked;
         public static HediffDef WTH_BackupBattery;
         public static HediffDef WTH_ReplacedAI;
@@ -70,6 +73,7 @@ namespace WhatTheHack
         public static ThingDef WTH_MechanoidPlatform;
         public static ThingDef WTH_PortableChargingPlatform;
         public static ThingDef WTH_MechanoidParts;
+        public static ThingDef WTH_MineableMechanoidParts;
         public static ThingDef WTH_MechanoidChip;
         public static ThingDef WTH_Mote_Charging;
         public static ThingDef WTH_Mote_HealingCrossGreen;
@@ -84,13 +88,16 @@ namespace WhatTheHack
         public static StatDef WTH_ControllerBeltRadius;
         public static StatDef WTH_RepairRate;
         public static StatDef WTH_PowerRate;
+        public static StatDef WTH_PowerRatePercentage;
         public static StatDef WTH_PowerProduction;
         public static StatDef WTH_BatteryCapacity;
+        public static StatDef WTH_BatteryCapacityPercentage;
         public static StatDef WTH_RechargeRate;
         public static StatDef WTH_PartConsumptionRate;
         public static StatCategoryDef WTH_StatCategory_HackedMechanoid;
         public static StatCategoryDef WTH_StatCategory_Colonist;
         public static StatCategoryDef WTH_StatCategory_Platform;
+        public static StatCategoryDef WTH_StatCategory_Hidden;
 
         public static ResearchProjectDef WTH_TurretModule_GunTurrets;
         public static ResearchProjectDef WTH_TurretModule_Mortars;
@@ -108,8 +115,6 @@ namespace WhatTheHack
         public static ConceptDef WTH_Concept_RogueAI;
         public static ConceptDef WTH_Concept_RogueAI_LevelUp;
         public static ConceptDef WTH_Concept_RogueAI_Mood;
-        public static SiteCoreDef WTH_RoamingMechanoidsCore;
-        public static SiteCoreDef WTH_MechanoidTempleCore;
 
         public static SitePartDef WTH_RoamingMechanoidsPart;
         public static SitePartDef WTH_MechanoidTemplePart;

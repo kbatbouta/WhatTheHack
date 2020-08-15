@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,11 +39,11 @@ namespace WhatTheHack.Harmony
             for (var i = 0; i < instructionsList.Count; i++)
             {
                 CodeInstruction instruction = instructionsList[i];
-                if (instruction.operand == typeof(Pawn).GetMethod("get_RaceProps"))
+                if (instruction.operand as MethodInfo == typeof(Pawn).GetMethod("get_RaceProps"))
                 {
                     yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(CE_JobGiver_TakeAndEquip_TryGiveJob), "ShouldReload", new Type[] { typeof(Pawn) }));//Injected code     
                 }
-                else if (instruction.operand == AccessTools.Method(typeof(RaceProperties), "get_Humanlike"))
+                else if (instruction.operand as MethodInfo == AccessTools.Method(typeof(RaceProperties), "get_Humanlike"))
                 {
                     //Ommit this instruction
                 }
@@ -63,7 +63,6 @@ namespace WhatTheHack.Harmony
             //For mechanoids replace the check of is p.RaceProps.HumanLike by custom logic
             if (p.RaceProps.IsMechanoid && p.IsHacked())
             {
-                Log.Message("mech should reload called");
                 //return true when a mechanoid is hacked and does not have much ammo. 
                 ThingComp inventory = TryGetCompByTypeName(p, "CompInventory", "CombatExtended");
                 ThingWithComps eq = p.equipment.Primary;
@@ -90,7 +89,6 @@ namespace WhatTheHack.Harmony
                             {
                                 p.equipment.AddEquipment(eq.SplitOff(1) as ThingWithComps);
                             }
-                            Log.Message("mech should reload returning true");
                             return true;
                         }
                     }

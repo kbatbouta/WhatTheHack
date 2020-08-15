@@ -28,7 +28,6 @@ namespace WhatTheHack.Storage
         internal int lastEmergencySignalDelay = 0;
         internal int lastEmergencySignalCooldown = 0;
 
-
         public ExtendedDataStorage(World world) : base(world)
         {
         }
@@ -85,7 +84,7 @@ namespace WhatTheHack.Storage
             {
                 _store.Remove(key);
             }
-            Log.Message("Cleaned up " + shouldRemove.Count + " depricated records from What the Hack!?");
+            Log.Message("Cleaned up " + shouldRemove.Count + " deprecated records from What the Hack!?");
         }
         
 

@@ -27,7 +27,7 @@ namespace WhatTheHack.WorldIncidents
             resolveParams2.mechanoidsCount = new int?((!mechanoidsCount.HasValue) ? SymbolResolver_Interior_MechanoidTemple.MechanoidCountRange.RandomInRange : mechanoidsCount.Value);
             BaseGen.symbolStack.Push("randomMechanoidGroup", resolveParams2);
 
-            int? ancientTempleEntranceHeight = rp.ancientTempleEntranceHeight;
+            int? ancientTempleEntranceHeight = rp.ancientCryptosleepCasketGroupID;
             int num = (!ancientTempleEntranceHeight.HasValue) ? 0 : ancientTempleEntranceHeight.Value;
             ResolveParams resolveParams4 = rp;
             resolveParams4.rect.minZ = resolveParams4.rect.minZ + num;

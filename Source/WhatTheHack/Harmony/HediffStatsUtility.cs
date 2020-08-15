@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -29,27 +29,27 @@ namespace WhatTheHack.Harmony
             {
                 if (modExt.armorOffset != 0)
                 {
-                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.ArmorRating_Blunt.label, modExt.armorOffset.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Offset), 0);
-                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.ArmorRating_Sharp.label, modExt.armorOffset.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Offset), 0);
+                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.ArmorRating_Blunt, modExt.armorOffset, StatRequest.ForEmpty());
+                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.ArmorRating_Sharp, modExt.armorOffset, StatRequest.ForEmpty());
                 }
                 if (modExt.batteryCapacityOffset != 0) {
-                    yield return new StatDrawEntry(WTH_DefOf.WTH_StatCategory_HackedMechanoid, WTH_DefOf.WTH_BatteryCapacity.label, modExt.batteryCapacityOffset.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Offset), 0);
+                    yield return new StatDrawEntry(WTH_DefOf.WTH_StatCategory_Hidden, WTH_DefOf.WTH_BatteryCapacityPercentage, modExt.batteryCapacityOffset, StatRequest.ForEmpty());
                 }
                 if (modExt.powerRateOffset != 0)
                 {
-                    yield return new StatDrawEntry(WTH_DefOf.WTH_StatCategory_HackedMechanoid, WTH_DefOf.WTH_PowerRate.label, modExt.powerRateOffset.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Offset), 0);
+                    yield return new StatDrawEntry(WTH_DefOf.WTH_StatCategory_Hidden, WTH_DefOf.WTH_PowerRatePercentage, modExt.powerRateOffset, StatRequest.ForEmpty());
                 }
 
                 if (modExt.firingRateOffset != 0)
                 {
-                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.RangedWeapon_Cooldown.label, modExt.firingRateOffset.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Offset), 0);
-                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.MeleeWeapon_CooldownMultiplier.label, modExt.firingRateOffset.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Offset), 0);
-                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.AimingDelayFactor.label, modExt.firingRateOffset.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Offset), 0);
+                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.RangedWeapon_Cooldown, modExt.firingRateOffset, StatRequest.ForEmpty());
+                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.MeleeWeapon_CooldownMultiplier, modExt.firingRateOffset, StatRequest.ForEmpty());
+                    yield return new StatDrawEntry(StatCategoryDefOf.PawnCombat, StatDefOf.AimingDelayFactor, modExt.firingRateOffset, StatRequest.ForEmpty());
                 }
                 
                 if(modExt.carryingCapacityOffset != 0)
                 {
-                    yield return new StatDrawEntry(StatCategoryDefOf.Basics, StatDefOf.CarryingCapacity.label, modExt.carryingCapacityOffset.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Offset),0);
+                    yield return new StatDrawEntry(StatCategoryDefOf.Basics, StatDefOf.CarryingCapacity, modExt.carryingCapacityOffset, StatRequest.ForEmpty());
                 }
             }
         }

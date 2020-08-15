@@ -17,7 +17,7 @@ namespace WhatTheHack.Alerts
             this.defaultPriority = AlertPriority.High;
         }
 
-        public override string GetExplanation()
+        public override TaggedString GetExplanation()
         {
             Map map = this.MapWithLowMechanoidParts();
             if (map == null)

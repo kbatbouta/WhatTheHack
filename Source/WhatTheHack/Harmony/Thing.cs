@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,9 @@ namespace WhatTheHack.Harmony
     {
         static bool Prefix(Thing __instance, ref Vector3 __result)
         {
-            if(!__instance.Destroyed && __instance.TryGetComp<CompMountable>() is CompMountable comp && comp.Active)
+
+            var comp = __instance.compMountable;
+            if (comp != null && !__instance.Destroyed && comp.Active)
             {
                 Vector3 drawPos = comp.mountedTo.DrawPos;
                 drawPos.z = comp.mountedTo.DrawPos.z + comp.drawOffset;
@@ -41,7 +43,7 @@ namespace WhatTheHack.Harmony
             return true;
         }
     }
-    
+
 
     [HarmonyPatch(typeof(Thing), "DrawExtraSelectionOverlays")]
     static class Thing_DrawExtraSelectionOverlays
@@ -63,7 +65,7 @@ namespace WhatTheHack.Harmony
                     }
                     GenDraw.DrawLineBetween(pawn.Position.ToVector3Shifted(), pawn.RemoteControlLink().Position.ToVector3Shifted());
                 }
-                if(pawn.ControllingAI() is Building_RogueAI controller)
+                if (pawn.ControllingAI() is Building_RogueAI controller)
                 {
                     if (controller.controlledMechs.Contains(pawn))
                     {
@@ -75,7 +77,7 @@ namespace WhatTheHack.Harmony
                     }
                 }
             }
-            
+
             if (__instance is Building_RogueAI rogueAI)
             {
                 foreach (Pawn pawn in rogueAI.controlledMechs)

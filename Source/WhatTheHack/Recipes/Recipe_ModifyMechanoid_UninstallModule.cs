@@ -10,9 +10,14 @@ namespace WhatTheHack.Recipes
 {
     class Recipe_ModifyMechanoid_UninstallModule : Recipe_ModifyMechanoid
     {
-        protected override bool CanApplyOn(Pawn pawn)
+        protected override bool IsValidPawn(Pawn pawn)
         {
-            return base.CanApplyOn(pawn);
+            if (recipe.GetModExtension<DefModExtension_Recipe>() is DefModExtension_Recipe modExt && modExt.requiredHediff != null)
+            {
+                bool hasRequiredHediff = pawn.health.hediffSet.HasHediff(modExt.requiredHediff);
+                return pawn.IsHacked() && hasRequiredHediff;
+            }
+            return false;
         }
 
         protected override void PostSuccessfulApply(Pawn pawn, BodyPartRecord part, Pawn billDoer, List<Thing> ingredients, Bill bill)
